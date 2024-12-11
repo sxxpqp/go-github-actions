@@ -16,7 +16,11 @@ RUN go build -o myapp .
 
 # 使用较小的基础镜像运行应用
 FROM debian:bullseye-slim
+# 安装 ca-certificates
+RUN apt-get update && apt-get install -y ca-certificates
 
+# 安装其他可能需要的依赖
+RUN apt-get install -y libc6 libgcc1
 # 将编译好的二进制文件复制到新的镜像中
 COPY --from=builder /app/myapp /usr/local/bin/myapp
 
