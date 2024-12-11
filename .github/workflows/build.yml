@@ -53,7 +53,8 @@ jobs:
       - name: Docker Login to Aliyun Registry
         run: |
           echo "${{ secrets.ALIYUN_REGISTRY_PASSWORD }}" | docker login $ALIYUN_REGISTRY -u $ALIYUN_REGISTRY_USER --password-stdin
-
+          declare -A duplicate_images
+          declare -A temp_map
       # 构建 Go 项目的 Docker 镜像并推送
       - name: Build and push Go Docker image
         run: |
@@ -62,3 +63,12 @@ jobs:
 
           # 推送到阿里云容器镜像仓库
           docker push $ALIYUN_REGISTRY/$ALIYUN_NAME_SPACE/my-go-app:latest
+          echo "开始清理磁盘空间"
+          echo "=============================================================================="
+          df -hT
+          echo "=============================================================================="
+          docker rmi $ALIYUN_REGISTRY/$ALIYUN_NAME_SPACE/my-go-app:latest
+          echo "磁盘空间清理完毕"
+          echo "=============================================================================="
+          df -hT
+          echo "=============================================================================="
