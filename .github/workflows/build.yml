@@ -53,7 +53,8 @@ jobs:
         id: version
         run: |
           VERSION="v$(git rev-list --count HEAD)"
-          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "VERSION=$VERSION"
+          echo "::set-output name=version::$VERSION"
       # 登录阿里云容器镜像仓库
       - name: Docker Login to Aliyun Registry
         run: |
@@ -64,15 +65,15 @@ jobs:
       - name: Build and push Go Docker image
         run: |
           # 构建 Go 项目 Docker 镜像
-          docker build -t $ALIYUN_REGISTRY/$ALIYUN_NAME_SPACE/my-go-app:${{ env.VERSION }} .
+          docker build -t $ALIYUN_REGISTRY/$ALIYUN_NAME_SPACE/my-go-app:${{ steps.version.outputs.version }} .
 
           # 推送到阿里云容器镜像仓库
-          docker push $ALIYUN_REGISTRY/$ALIYUN_NAME_SPACE/my-go-app:${{ env.VERSION }}
+          docker push $ALIYUN_REGISTRY/$ALIYUN_NAME_SPACE/my-go-app:${{ steps.version.outputs.version }}
           echo "开始清理磁盘空间"
           echo "=============================================================================="
           df -hT
           echo "=============================================================================="
-          docker rmi $ALIYUN_REGISTRY/$ALIYUN_NAME_SPACE/my-go-app:${{ env.VERSION }}
+          docker rmi $ALIYUN_REGISTRY/$ALIYUN_NAME_SPACE/my-go-app:${{ steps.version.outputs.version }}
           echo "磁盘空间清理完毕"
           echo "=============================================================================="
           df -hT
