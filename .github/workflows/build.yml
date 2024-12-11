@@ -48,7 +48,12 @@ jobs:
 
       - name: Docker Setup Buildx
         uses: docker/setup-buildx-action@v3
-
+      # 获取当前 Git 提交次数作为版本号
+      - name: Get version number
+        id: version
+        run: |
+          VERSION="v$(git rev-list --count HEAD)"
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
       # 登录阿里云容器镜像仓库
       - name: Docker Login to Aliyun Registry
         run: |
@@ -59,15 +64,15 @@ jobs:
       - name: Build and push Go Docker image
         run: |
           # 构建 Go 项目 Docker 镜像
-          docker build -t $ALIYUN_REGISTRY/$ALIYUN_NAME_SPACE/my-go-app:latest .
+          docker build -t $ALIYUN_REGISTRY/$ALIYUN_NAME_SPACE/my-go-app:${{ env.VERSION }} .
 
           # 推送到阿里云容器镜像仓库
-          docker push $ALIYUN_REGISTRY/$ALIYUN_NAME_SPACE/my-go-app:latest
+          docker push $ALIYUN_REGISTRY/$ALIYUN_NAME_SPACE/my-go-app:${{ env.VERSION }}
           echo "开始清理磁盘空间"
           echo "=============================================================================="
           df -hT
           echo "=============================================================================="
-          docker rmi $ALIYUN_REGISTRY/$ALIYUN_NAME_SPACE/my-go-app:latest
+          docker rmi $ALIYUN_REGISTRY/$ALIYUN_NAME_SPACE/my-go-app:${{ env.VERSION }}
           echo "磁盘空间清理完毕"
           echo "=============================================================================="
           df -hT
