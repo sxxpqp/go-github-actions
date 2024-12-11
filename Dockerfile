@@ -15,7 +15,9 @@ RUN go mod tidy
 RUN go build -o myapp .
 
 # 使用较小的基础镜像运行应用
-FROM debian:bullseye-slim
+# FROM debian:bullseye-slim
+
+FROM ubuntu
 # 安装 ca-certificates
 RUN apt-get update && apt-get install -y ca-certificates
 
