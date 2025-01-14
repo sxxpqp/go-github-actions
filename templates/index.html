@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script>
+            const token = localStorage.getItem('token');
+            console.log(token)
+            if (token) {
+            fetch('http://localhost:8080/home', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,  // 在请求头部携带 token
+                }
+
+            })
+                .then(response => response)
+                .then(data => {
+                    console.log('Data received:', data);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        } else {
+            console.error('No token found. Please log in.');
+        }
+
+    </script>
+</head>
+<body>
+
+</body>
+</html>
